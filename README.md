@@ -10,7 +10,7 @@
 
 ## Description
 
-DNSViz is a tool suite for analysis and visualization of Domain Name System
+DNSViz is a tool suite for analysis and visualization of the Domain Name System
 (DNS) behavior, including its security extensions (DNSSEC).  This tool suite
 powers the Web-based analysis available at https://dnsviz.net/
 
@@ -26,7 +26,7 @@ Centos.)  In each case, it can be installed using the package installation
 commands typical for that operating system.  DNSViz can also be installed on
 Mac OS X using Homebrew or MacPorts.
 
-The remainer of this section covers other methods of installation, including a
+The remainder of this section covers other methods of installation, including a
 list of [dependencies](#dependencies), installation to a
 [virtual environment](#installation-in-a-virtual-environment), and
 [notes for installing on RHEL 8 or 9 or CentOS Stream 8 or 9,](#rhel-89-or-centos-stream-89-notes)).
@@ -38,7 +38,7 @@ Instructions for running in a Docker container are also available
 ### Dependencies
 
 * Python (2.7, 3.5 - 3.12) - https://www.python.org/
-  (Note that python 2.7 support will be removed in a future release.)
+  (Note that Python 2.7 support will be removed in a future release.)
 
 * dnspython (1.13.0 or later) - https://www.dnspython.org/
 
@@ -63,9 +63,9 @@ pygraphviz 1.6 and dnspython 2.0.0 dropped support for Python 2.7.
 
 * M2Crypto - https://gitlab.com/m2crypto/m2crypto
 
-  While almost all of the cryptgraphic support for DNSViz is handled with the
+  While almost all of the cryptographic support for DNSViz is handled with the
   cryptography Python module, support for algorithm 12 (GOST R 34.10-2001)
-  digest type 3 (GOST R 34.11-94) require the OpenSSL GOST Engine.  That engine
+  digest type 3 (GOST R 34.11-94) requires the OpenSSL GOST Engine.  That engine
   must be loaded dynamically, and there is no support for that with
   cryptography.  Thus, if you need to support algorithm 12 or digest type 3,
   you must also install M2Crypto.
@@ -189,7 +189,7 @@ $ dnsviz probe -A -o example.com.json example.com
 
 Analyze the domain name example.com by querying explicitly-defined
 authoritative servers, rather than learning the servers through referrals from
-the IANA root servers:
+The IANA root servers:
 ```
 $ dnsviz probe -A \
   -x example.com:a.iana-servers.org=199.43.132.53,a.iana-servers.org=[2001:500:8c::53] \
@@ -207,7 +207,7 @@ $ dnsviz probe -A \
 Analyze the domain name example.com and its entire ancestry by querying
 authoritative servers and following delegations, starting at the root:
 ```
-$ dnsviz probe -A -a . -o example.com.json example.com
+$ dnsviz probe -A-a. -o example.com.json example.com
 ```
 
 Analyze multiple names in parallel (four threads) using explicit recursive
@@ -255,7 +255,7 @@ Show descriptions only if there are related errors:
 $ dnsviz grok -l error -r example.com.json -o example.com-chk.json
 ```
 
-Use root key as DNSSEC trust anchor, to additionally indicate
+Use the root key as a DNSSEC trust anchor to additionally indicate
 authentication status of responses:
 ```
 $ dig +noall +answer . dnskey | awk '$5 % 2 { print $0 }' > tk.txt
@@ -291,7 +291,7 @@ corresponding content in the input.  The output is an image file, a `dot`
 #### Examples
 
 Process the query/response output produced by `dnsviz probe`, and produce a
-graph visually representing the results in a png file named "example.com.png".
+graph visually representing the results in a PNG file named "example.com.png".
 ```
 $ dnsviz graph -Tpng < example.com.json > example.com.png
 ```
@@ -301,8 +301,8 @@ Same thing:
 $ dnsviz graph -Tpng -o example.com.png example.com < example.com.json
 ```
 
-Same thing, but produce interactive HTML format:
-interactive HTML output in a file named "example.com.html":
+Same thing, but produce an interactive HTML format:
+Interactive HTML output in a file named "example.com.html":
 ```
 $ dnsviz graph -Thtml < example.com.json > example.com.html
 ```
@@ -347,7 +347,7 @@ $ dnsviz graph -Thtml -r multiple.json > multiple.html
 
 `dnsviz print` takes serialized query results in JSON format (i.e., output from
 `dnsviz probe`) as input and assesses specified domain names based on their
-corresponding content in the input.  The output is textual output suitable for
+corresponding content in the input.  The output is a textual output suitable for
 file or terminal display.
 
 
@@ -382,8 +382,8 @@ $ dnsviz probe example.com | tee example.com.json | \
 
 `dnsviz query` is a wrapper that couples the functionality of `dnsviz probe`
 and `dnsviz print` into a tool with minimal dig-like usage, used to make
-analysis queries and return the textual output to terminal or file output in
-one go.
+analysis queries and return the textual output to the terminal or file output in
+One go.
 
 
 #### Examples
@@ -407,7 +407,7 @@ $ dnsviz query @192.0.2.1 +trusted-key=tk.txt example.com
 
 ## Pre-Deployment DNS Testing
 
-The examples in this section demonstrate usage of DNSViz for pre-deployment
+The examples in this section demonstrate the usage of DNSViz for pre-deployment
 testing.
 
 
@@ -419,14 +419,14 @@ is ever delegated.
 Issue queries against a zone file on the local system (`example.com.zone`).
 `named(8)` is invoked to serve the file locally:
 ```
-$ dnsviz probe -A -x example.com+:example.com.zone example.com
+$ dnsviz probe -A x example.com: + example.com. zone example.com
 ```
 (Note the use of "+", which designates that the parent servers should not be
 queried for DS records.)
 
 Issue queries to a server that is serving the zone:
 ```
-$ dnsviz probe -A -x example.com+:192.0.2.1 example.com
+$ dnsviz probe -A x example.com.com+:192.0.2.1 example.com
 ```
 (Note that this server doesn't need to be a server in the NS RRset for
 example.com.)
@@ -467,14 +467,14 @@ before changes are deployed.
 Issue diagnostic queries for a new zone file that has been created but not yet
 been deployed (i.e., with changes to DNSKEY or other records):
 ```
-$ dnsviz probe -A -x example.com:example.com.zone example.com
+$ dnsviz probe -A x example.com:example.com.zone example.com
 ```
 (Note the absence of "+", which designates that the parent servers will be
 queried for DS records.)
 
 Issue queries to a server that is serving the new version of the zone:
 ```
-$ dnsviz probe -A -x example.com:192.0.2.1 example.com
+$ dnsviz probe -A x example.com:192.0.2.1 example.com
 ```
 (Note that this server doesn't need to be a server in the NS RRset for
 example.com.)
@@ -513,7 +513,7 @@ A ready-to-use docker container is available for use.
 docker pull dnsviz/dnsviz
 ```
 
-This section only covers Docker-related examples, for more information see the
+This section only covers Docker-related examples. For more information, see the
 [Usage](#usage) section.
 
 
@@ -541,7 +541,7 @@ $ docker run -v "$PWD:/data:rw" dnsviz/dnsviz graph -r probe.json -T png -O
 When running authoritative queries, a host network is recommended.
 
 ```
-$ docker run --network host dnsviz/dnsviz probe -4 -A example.com > example.json
+$ docker run-- network host dnsviz/dnsviz probe -4 -A example.com > example.json
 ```
 
 Otherwise, you're likely to encounter the following error:
